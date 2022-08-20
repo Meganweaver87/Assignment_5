@@ -12,7 +12,11 @@
 <img src="${}">
 */
 
-const planetsReturned = require('./scriptHelper.js'); //require not defined???
+const addDestinationInfo = require("./scriptHelper.js");
+const myFetch = require('./scriptHelper.js');
+const validateInput = require("./scriptHelper.js");
+const formSubmission = require("./scriptHelper.js");
+const pickPlanet = require("./scriptHelper.js");
 
 
 window.addEventListener("load", function() {
