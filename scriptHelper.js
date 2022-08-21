@@ -5,105 +5,143 @@ require('isomorphic-fetch');
 //let fuelStatus = document.getElementById("fuelStatus");
 // cargoStatus = document.getElementById("cargoStatus");
 
+//  let pilotName = document.getElementById("input[name=pilotName]");
+//  let copilotName = document.getElementById("input[name=copilotName]");
+//  let fuelLevel = document.getElementById("input[name=fuelLevel]");
+//  let cargoMass = document.getElementById("input[name=cargoMass]");
+//  idk why I made these right now 
+
 
 function addDestinationInfo(document, name, diameter, star, distance, moons, imageUrl) {
-    // Here is the HTML formatting for our mission target div.
-    /*
-                 <h2>Mission Destination</h2>
-                 <ol>
-                     <li>Name: </li>
-                     <li>Diameter: </li>
-                     <li>Star: ${star}</li>
-                     <li>Distance from Earth: </li>
-                     <li>Number of Moons: </li>
-                 </ol>
-                 <img src="">
-    */
-   // NO RETURN VALUE
-};
+    document.getElementById("missionTarget").innerHTML = `
+    <h2>Mission Destination</h2>
+    <ul>
+        <li>Name: ${name}</li>
+        <li>Diameter: ${diameter}</li>
+        <li>Star: ${star}</li>
+        <li>Distance from Earth: ${distance}</li>
+        <li>Number of moons: ${moons}</li>
+    </ul>
+    <img src = "${imageUrl}" alt = "cool planet">
+    `;
+}; // close addDestinationInfo;
  
 
 function validateInput(testInput) {
-    if (testInput.value === "") {
-        console.log("empty string");
-        window.alert("All fields required! Please try again.");
-        return "Empty";
-    } else if (isNaN(Number(testInput.value))) { // if converting testinput results in NaN
+    console.log("empty string");
+    if (testInput == "") {
+       return "Empty";
+    } else if (isNaN(Number(testInput))) { //converting testinput results in NaN
         console.log("not a number");
         return "Not a Number";
-    } else if ((Number(testInput.value).type == number)) { // if converting testinput results in number
+    } else if ((Number(testInput.value).type == number)) { //converting testinput results in number
         console.log("is a number");
         return "Is a Number";
     } else {
         return "Invalid Input. Please try again.";
-    } // chapter 25.9 gave us a better way to do this??? I need a window load event???
-};
+    } 
+ }; // close validateInput
 
- 
-function formSubmission(document, list, pilot, copilot, fuelLevel, cargoLevel) {
+
+
+ function formSubmission(document, list, pilot, copilot, fuelLevel, cargoMass) {
 
     let launchStatus = document.getElementById("launchStatus");
-    let visibility = document.getElementById("visibility");
-
-    if (validateInput(pilotName) === "Not a Number" ) {
-        pilotStatus.innerHTML = `${pilotName} ready!`;
-        console.log("formsubmissionpilot");
+    let faultyItems = document.getElementById("faultyItems");
+ 
+    let pilotValidation = validateInput(pilot);
+    let copilotValidation = validateInput(copilot);
+    let fuelLevelValidation = validateInput(fuelLevel);
+    let cargoMassValidation = validateInput(cargoMass);
+ 
+ 
+    if (pilotValidation == "Empty") {
+       window.alert("Pilot name required! Please try again.");
+    } else if (pilotValidation === "Number" ) {
+       window.alert("Pilot name cannot be a number! Please try again.");
+    } else {
+       pilotStatus.innerHTML = `${pilotName} ready!`;
+       console.log("formsubmissionpilot");
     }
-
-    if (validateInput(pilotName) === "Not a Number") {
-        copilotStatus.innerHTML = `${copilotName} ready!`;
-        console.log("formsubmissioncopilot");
+ 
+    if (copilotValidation == "Empty") {
+       window.alert("Copilot name required! Please try again.");
+    } else if (copilotValidation === "Number" ) {
+       window.alert("Copilot name cannot be a number! Please try again.");
+    } else {
+       copilotStatus.innerHTML = `${pilotName} ready!`;
+       console.log("formsubmissioncopilot");
     }
      
-    if (validateInput(fuelStatus) === "Is a Number") {
-        if (Number(fuelStatus.innerHTML) < 10000 ) {
-            launchStatus.innerHTML = "Fuel level low. Shuttle not ready for launch.";
-            launchStatus.innerHTML.color = "#de919a";
-            visibility = "visible";
+    if (fuelLevelValidation == "Empty") {
+       window.alert("Fuel level required! Please try again.");
+    } else if (fuelLevelValidation == "Not a Number") {
+       window.alert("Fuel level must be a number! Please try again.");
+    } else if (fuelLevelValidation === "Is a Number") {
+        if (Number(fuelLevel) < 10000 ) {
+            fuelStatus.innerHTML = "Fuel level low! Minimum fuel required: 10,001 liters.";
+            launchStatus.innerHTML = "Shuttle not ready for launch. Please inspect fuel tank.";
+            launchStatus.style.color = "#de919a";
+            faultyItems.style.visibility = "visible";
             console.log("formsubmissionfuel");
         } // close if
+    } else {
+       fuelStatus.innerHTML = "Fuel level sufficient for launch!"
     }
-
-    if (validateInput(cargoStatus) === "Is a Number") {
-        if (Number(cargoStatus.innerHTML) > 10000 ) {
-            launchStatus.innerHTML = "Cargo level high. Shuttle not ready for launch.";
-            launchStatus.innerHTML.color = "#de919a";
-            visibility = "visible";
+ 
+    if (cargoMassValidation == "Empty") {
+       window.alert("Cargo mass required! Please try again.");
+    } else if (cargoMassValidation == "Not a Number") {
+       window.alert("Cargo mass must be a number! Please try again.");
+    } else if (cargoMassValidation === "Is a Number") {
+        if (Number(cargoMass) > 10000 ) {
+            cargoStatus.innerHTML = "Cargo mass high! Maximum cargo mass allowed: 9,999 kilograms.";
+            launchStatus.innerHTML = "Shuttle not ready for launch. Please inspect cargo hold.";
+            launchStatus.style.color = "#de919a";
+            faultyItems.style.visibility = "visible";
             console.log("formsubmissioncargo");
         } // close if
-    } 
-
+    } else {
+       cargoStatus.innerHTML = "Cargo mass sufficient for launch!"
+    }
     
-    return true;
-}; // close formsubmission
+    if (Number(fuelLevel) > 10000 && Number(cargoMass) < 10000) {
+       launchStatus.innerHTML = "Shuttle ready for launch!"
+       launchStatus.style.color = "#b3ccba";
+    }
+    
+ }; // close formsubmission
 
 
-async function myFetch() {
+ async function myFetch() {
     let planetsReturned;
+    console.log("fetchy");
     planetsReturned = await fetch("https://handlers.education.launchcode.org/static/planets.json").then( function(response) {
-        response.json().then(function(json) {
-            return json;
-        }); // clsoe response
+    console.log("fetch");
+    console.log(planetsReturned);
+    return response.json();
     }); // close planetsReturned
-}; // close myFetch
+ }; // close myFetch
  
 // DONE
 function pickPlanet(planets) {
-    let selectedPlanet = Math.floor(Math.random() * planets.length);
+    console.log(planets);
+    let planetIndex = Math.floor(Math.random() * planets.length);
+    let selectedPlanet = planets[planetIndex];
     return selectedPlanet;
-}; // close pickPlanet
+ }; // close pickPlanet
  
 
-module.exports = {
-     addDestinationInfo: addDestinationInfo,
-     validateInput: validateInput,
-     formSubmission: formSubmission,
-     pickPlanet: pickPlanet,
-     myFetch: myFetch
-}; // close exports
+// module.export = {
+//      addDestinationInfo: addDestinationInfo,
+//      validateInput: validateInput,
+//      formSubmission: formSubmission,
+//      pickPlanet: pickPlanet,
+//      myFetch: myFetch
+// }; // close exports
  
-// module.exports.addDestinationInfo = addDestinationInfo;
-// module.exports.validateInput = validateInput;
-// module.exports.formSubmission = formSubmission;
-// module.exports.pickPlanet = pickPlanet; 
-// module.exports.myFetch = myFetch;
+module.exports.addDestinationInfo = addDestinationInfo;
+module.exports.validateInput = validateInput;
+module.exports.formSubmission = formSubmission;
+module.exports.pickPlanet = pickPlanet; 
+module.exports.myFetch = myFetch;
